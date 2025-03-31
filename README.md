@@ -7,6 +7,9 @@
 ### 前端地址
 [https://github.com/wjz-sec/SentryHawk-Front](https://github.com/wjz-sec/SentryHawk-Front)
 
+### 支持平台
+Linux
+
 ### 项目功能 🔨
 
 - 高速端口识别：借助强大的扫描能力，几分钟内可对数百万端口进行扫描，精准识别网络服务类型，让企业清晰了解网络端口的开放情况和服务运行状态。
