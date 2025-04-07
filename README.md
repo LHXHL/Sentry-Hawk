@@ -39,10 +39,23 @@ Linux
 ```shell
 git clone git@github.com:wjz-sec/Sentry-Hawk.git
 ```
-- 2.安装依赖包 `pip install -r requirements.txt`
-- 3.创建迁移文件 `python ./manage.py makemigrations`
-- 4.迁移数据库 `python ./manage.py migrate`
-- 5.启动服务 `python ./manage.py runserver 0.0.0.0:8000`
+- 2.配置数据库 `SentryHawk\settings.py`
+```code
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'xxx', # 数据库名称
+        'USER': 'xxx', # 数据库用户名
+        'PASSWORD': 'xxx', # 数据库密码
+        'HOST': 'postgres', # 数据库地址
+        'PORT': '5432', # 数据库端口
+    }
+}
+```
+- 3.安装依赖包 `pip install -r requirements.txt`
+- 4.创建迁移文件 `python ./manage.py makemigrations`
+- 5.迁移数据库 `python ./manage.py migrate`
+- 6.启动服务 `python ./manage.py runserver 0.0.0.0:8000`
 
 
 ### 项目截图 📷
