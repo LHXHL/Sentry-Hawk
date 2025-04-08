@@ -1,0 +1,24 @@
+# 配置
+api:
+  QUAKE_API_KEY: ""
+  FOFA_API_KEY: ""
+  FOFA_USER_TOKEN: ""
+  
+email:
+  FOFA_EMAIL: ""
+
+blacklist_keywords:
+  blacklist_mail: ['mail.', 'email.', 'smtp.', 'pop.', 'pop3.', 'pop3s.', 'imap.', 'mailgun.', 'sendgrid.', 'outlook.', 'gmail.', 'yahoo.']
+
+info_tools:
+  dnsub_path : "D:\\assets_ledger\\plugin\\tools\\subdomain\\dnsub\\dnsub.exe"
+  cwd_path : "D:\\assets_ledger\\plugin\\tools\\subdomain\\dnsub\\"
+  rustscan_path : "D:\\assets_ledger\\plugin\\tools\\rustscan\\rustscan.exe"
+  ehole_path : "D:\\assets_ledger\\plugin\\tools\\ehole_windows\\ehole_windows.exe"
+  work_dir : "D:\\assets_ledger\\plugin\tools\\ehole_windows\\"
+  tidefinger_path : "D:\\assets_ledger\\plugin\\tools\\Tide_finger\\TideFinger.exe"
+  xray_path : "D:\\assets_ledger\\plugin\\tools\\xray\\"
+  nuclei_path : "D:\\assets_ledger\\plugin\\tools\\nuclei\\"
+  nuclei_temp : "D:\\assets_ledger\\plugin\\tools\\nuclei-templates\\"
+  afrog_path : "D:\\assets_ledger\\plugin\\tools\\afrog\\"
+

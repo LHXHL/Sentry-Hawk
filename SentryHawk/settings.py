@@ -88,9 +88,9 @@ WSGI_APPLICATION = 'SentryHawk.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'xxx',
-        'USER': 'xxx',
-        'PASSWORD': 'xxx',
+        'NAME': 'sentryhawk',
+        'USER': 'postgres',
+        'PASSWORD': 'Aa123456!!',
         'HOST': 'postgres',
         'PORT': '5432',
     }
