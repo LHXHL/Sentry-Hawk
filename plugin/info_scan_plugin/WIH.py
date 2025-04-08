@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from app.models import Wih_result, Asset_info
 
 
-wih_path = os.path.join(os.path.dirname(__file__), '../tools/wih/')  # 计算 wih 工具的目录
+wih_path = os.path.join(os.path.dirname(__file__), '../tools/WIH/')  # 计算 wih 工具的目录
 
 def run_wih(target):
     """
@@ -13,7 +13,7 @@ def run_wih(target):
     """
     print(f"WIH 开始扫描: {target}")
     command = [
-        'wih_linux_amd64',  # WIH 工具名称
+        './wih_linux_amd64',  # WIH 工具名称
         '-t', target,  # 目标
     ]
     # 执行命令并捕获输出
