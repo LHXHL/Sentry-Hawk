@@ -32,8 +32,29 @@ Linux
 
 - 系统设置：对平台的系统参数进行设置，如扫描参数、数据库连接参数、邮件通知设置等。可根据企业网络环境和安全需求，对平台进行个性化配置。
 
-
 ### 安装使用步骤 📔
+
+#### 一、docker 安装（推荐）
+
+```
+后端
+git clone https://github.com/wjz-sec/Sentry-Hawk.git
+unzip Sentry-Hawk-main.zip
+cd Sentry-Hawk-main
+docker-compose up -d
+
+前端
+git clone https://github.com/wjz-sec/SentryHawk-Front.git
+unzip SentryHawk-Front-main.zip
+cd SentryHawk-Front-main
+docker-compose up -d
+
+进入后端docker,创建用户
+docker exec -it <容器id> bash
+python manage.py createsuperuser
+```
+
+#### 二、本地安装
 
 - 1.下载
 ```shell
