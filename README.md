@@ -111,4 +111,4 @@ DATABASES = {
 
 ### 微信交流群 👨‍👨‍👦‍👦
 
-![wx_group](/images/wx_group.jpg)
+![image](https://github.com/user-attachments/assets/1b191810-eef9-41c1-9905-e36ddb3a6853)
