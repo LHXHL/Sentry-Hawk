@@ -220,10 +220,8 @@ class UserView(View):
             # 创建用户
             
             group, created = Group.objects.get_or_create(name=user_group)
-            user.groups.add(group)
             user = UserInfo.objects.create_user(username=username, password=password, email=email,phone_num=phone_num, is_active=is_active, is_superuser=is_superuser,user_group=group)
-            
-            
+            user.groups.add(group)
             user.save()
             return JsonResponse({
                 'code': 200,
