@@ -19,31 +19,38 @@ class BatchPocForm(forms.Form):
         
         # 验证文件格式
         if not any(file.name.lower().endswith(ext) for ext in ['.yaml', '.yml', '.zip']):
-            return self.add_error('file', '请上传YAML或ZIP格式的文件')
+            raise forms.ValidationError('请上传YAML或ZIP格式的文件')
             
         # 验证文件大小
         MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
         if file.size > MAX_UPLOAD_SIZE:
-            return self.add_error('file', '文件大小超过限制（最大5MB）')
+            raise forms.ValidationError('文件大小超过限制（最大5MB）')
             
         # 如果是zip文件，验证内容
         if file.name.lower().endswith('.zip'):
-            zip_file = zipfile.ZipFile(BytesIO(file.read()))
-            all_files = [f for f in zip_file.namelist() 
-                        if not f.endswith('/') 
-                        and not f.startswith('__MACOSX/') 
-                        and not f.startswith('.')]
-                        
-            # 检查是否包含非yaml文件
-            non_yaml_files = [f for f in all_files if not any(f.lower().endswith(ext) for ext in ['.yaml', '.yml'])]
-            if non_yaml_files:
-                return self.add_error('file', f'ZIP文件中包含非YAML文件: {", ".join(non_yaml_files)}')
+            try:
+                file_content = file.read()
+                file.seek(0)  # 重置文件指针
+                zip_file = zipfile.ZipFile(BytesIO(file_content))
                 
-            # 检查是否有yaml文件
-            if not any(f.lower().endswith(('.yaml', '.yml')) for f in all_files):
-                return self.add_error('file', 'ZIP文件中未找到YAML文件')
-                
-            file.seek(0)  # 重置文件指针
+                all_files = [f for f in zip_file.namelist() 
+                            if not f.endswith('/') 
+                            and not f.startswith('__MACOSX/') 
+                            and not f.startswith('.')]
+                            
+                # 检查是否包含非yaml文件
+                non_yaml_files = [f for f in all_files if not any(f.lower().endswith(ext) for ext in ['.yaml', '.yml'])]
+                if non_yaml_files:
+                    raise forms.ValidationError(f'ZIP文件中包含非YAML文件: {", ".join(non_yaml_files)}')
+                    
+                # 检查是否有yaml文件
+                if not any(f.lower().endswith(('.yaml', '.yml')) for f in all_files):
+                    raise forms.ValidationError('ZIP文件中未找到YAML文件')
+                    
+            except zipfile.BadZipFile:
+                raise forms.ValidationError('无效的ZIP文件格式')
+            except Exception as e:
+                raise forms.ValidationError(f'处理ZIP文件时出错: {str(e)}')
             
         return file
 
@@ -119,16 +126,17 @@ class batchaddpoc(View):
         MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB限制
 
         def process_yaml_file(yaml_content, filename):
+            
             # 验证YAML格式
             yaml_data = yaml.safe_load(yaml_content)
             
             # 验证必要字段
             if 'id' not in yaml_data:
-                return False, form.add_error('file', '请确保YAML文件包含id字段')
+                return False, "请确保YAML文件包含id字段"
             
             # 验证POC名称格式
             if not re.match(r'^[a-zA-Z0-9_-]{1,50}$', yaml_data['id']):
-                return False, form.add_error('file', '请确保POC名称格式正确（仅允许字母、数字、下划线和连字符）')
+                return False, "请确保POC名称格式正确（仅允许字母、数字、下划线和连字符）"
 
             # 定义severity映射
             severity_map = {'high': '高危', 'medium': '中危', 'low': '低危'}
@@ -145,7 +153,7 @@ class batchaddpoc(View):
             
             # 验证poc_name唯一性
             if Poc_info.objects.filter(poc_name=poc_data['poc_name']).exists():
-                return False, form.add_error('file', f"POC {poc_data['poc_name']} 已存在")
+                return False, f"POC {poc_data['poc_name']} 已存在"
 
             # 保存POC文件
             file_name = f"{poc_data['poc_name']}.yaml"
@@ -218,4 +226,4 @@ class batchaddpoc(View):
             return JsonResponse(res)
         else:
             res['msg'] = "导入失败，请检查文件格式是否正确"
-            return JsonResponse(res) 
+            return JsonResponse(res)

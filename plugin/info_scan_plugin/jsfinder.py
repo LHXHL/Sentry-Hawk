@@ -36,8 +36,11 @@ def run_jsfinder(target):
         'python','JSFinder.py',
         '-u', target
     ]
+
+    use_shell = True if platform.system() == 'Windows' else False
+
     # 执行命令并捕获输出
-    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=dirsearch_path)
+    result = subprocess.run(command, shell=use_shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=dirsearch_path)
     output = result.stdout.decode('utf-8')
     return output
 

@@ -3,21 +3,40 @@ import subprocess
 import os
 from concurrent.futures import ThreadPoolExecutor
 from app.models import Wih_result, Asset_info
+import platform
 
 
-wih_path = os.path.join(os.path.dirname(__file__), '../tools/WIH/')  # 计算 wih 工具的目录
+
 
 def run_wih(target):
     """
     调用 WIH 工具扫描指定目标
     """
     print(f"WIH 开始扫描: {target}")
-    command = [
-        './wih_linux_amd64',  # WIH 工具名称
-        '-t', target,  # 目标
-    ]
+    
+    # 根据操作系统选择工具路径和执行文件
+    if platform.system() == 'Windows':
+        tool_path = os.path.join(os.path.dirname(__file__), '../tools/WIH')
+        command = [
+            'wih_amd64.exe',
+            '-t', target,
+        ]
+    else:
+        tool_path = os.path.join(os.path.dirname(__file__), '../tools/WIH')
+        command = [
+            './wih_linux_amd64',
+            '-t', target,
+        ]
+
+    # 根据操作系统决定是否使用 shell
+    use_shell = True if platform.system() == 'Windows' else False
+    
+    # 如果是 Linux，确保文件有执行权限
+    if platform.system() != 'Windows':
+        subprocess.run(['chmod', '+x', os.path.join(tool_path, 'wih_linux_amd64')], shell=False)
+    
     # 执行命令并捕获输出
-    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=wih_path)
+    result = subprocess.run(command, shell=use_shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=tool_path)
     output = result.stdout.decode('utf-8')
     print(output)
     parsed_results = handle_result(output)

@@ -3,13 +3,27 @@ import subprocess
 import os
 from concurrent.futures import ThreadPoolExecutor
 from app.models import Ehole_info, Asset_info
+import platform
 
 
-dirsearch_path = os.path.join(os.path.dirname(__file__), '../tools/ehole_windows')  # 计算 wih 工具的目录
+# 删除全局变量 dirsearch_path，因为已经不再使用
 
 def run_ehole(target):
-
     print(f"ehole开始扫描: {target}")
+
+    # 根据操作系统选择工具路径和执行文件
+    if platform.system() == 'Windows':
+        tool_path = os.path.join(os.path.dirname(__file__), '../tools/ehole_windows')
+        command = [
+            'EHole_windows_amd64.exe', 'finger',
+            '-u', target
+        ]
+    else:
+        tool_path = os.path.join(os.path.dirname(__file__), '../tools/ehole_windows')
+        command = [
+            './ehole', 'finger',
+            '-u', target
+        ]
 
     # 判断target是否以http或https开头，如果不是，则添加http或https进行测试
     if not target.startswith(('http://', 'https://')):
@@ -30,12 +44,11 @@ def run_ehole(target):
     else:
         print(f"目标已包含协议: {target}")
 
-    command = [
-        './ehole','finger',
-        '-u', target
-    ]
+    # 根据操作系统决定是否使用 shell
+    use_shell = True if platform.system() == 'Windows' else False
+    
     # 执行命令并捕获输出
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=dirsearch_path)
+    result = subprocess.run(command, shell=use_shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=tool_path)
     output = result.stdout.decode('utf-8')
     parsed_results = handle_result(output)
     return parsed_results
@@ -90,5 +103,4 @@ def ehole_scan(project_id):
                         )
     print("ehole扫描结果写入完成")
     return results
-
 

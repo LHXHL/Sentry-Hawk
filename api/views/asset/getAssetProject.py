@@ -10,7 +10,13 @@ class getAssetProject(View):
             'code': 200,
             'data': [],
         }
-        projects = Projects.objects.all()
+        
+        # 根据用户权限过滤项目
+        if request.user.is_superuser:
+            projects = Projects.objects.all()
+        else:
+            projects = Projects.objects.filter(project_user=request.user.nid)
+            
         projects_data = ProjectsSerializer(instance=projects, many=True).data
         res['data'] = projects_data
         return JsonResponse(res, safe=False, json_dumps_params={'ensure_ascii': False})

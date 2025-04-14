@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views import View
-from app.models import Scan_info
+from app.models import Scan_info, Projects
 from django import forms
 from api.views.login import clean_form
 from api.serializers import ScanInfoSerializer
@@ -34,10 +34,27 @@ class getScanList(View):
             return JsonResponse(res)
 
         filter_kwargs = {}
+        
+        # 非管理员只能查看自己项目的扫描任务
+        if not request.user.is_superuser:
+            user_projects = Projects.objects.filter(project_user=request.user.nid).values_list('id', flat=True)
+            filter_kwargs['project_id__in'] = user_projects
+
         if form.cleaned_data['scan_name']:
             filter_kwargs['scan_name__icontains'] = form.cleaned_data['scan_name']
         if form.cleaned_data['project']:
+            # 验证用户是否有权限访问此项目
+            if not request.user.is_superuser:
+                project_id = form.cleaned_data['project']
+                if int(project_id) not in user_projects:
+                    return JsonResponse({
+                        'code': 403,
+                        'msg': '无权访问该项目的扫描任务',
+                        'data': {}
+                    })
             filter_kwargs['project_id__icontains'] = form.cleaned_data['project']
+            
+        contact_list = Scan_info.objects.filter(**filter_kwargs).order_by('scan_id')
         if filter_kwargs:
             contact_list = Scan_info.objects.filter(**filter_kwargs).order_by('scan_id')
         else:

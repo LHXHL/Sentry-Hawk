@@ -3,13 +3,25 @@ import subprocess
 import os
 from concurrent.futures import ThreadPoolExecutor
 from app.models import Tide_result, Asset_info
+import platform
 
-
-dirsearch_path = os.path.join(os.path.dirname(__file__), '../tools/Tide_finger')  # 计算 wih 工具的目录
 
 def run_tide(target):
+    print(f"TideFinger开始扫描: {target}")
 
-    print(f"ehole开始扫描: {target}")
+    # 根据操作系统选择工具路径和执行文件
+    if platform.system() == 'Windows':
+        tool_path = os.path.join(os.path.dirname(__file__), '../tools/Tide_finger')
+        command = [
+            'TideFinger.exe',
+            '-u', target
+        ]
+    else:
+        tool_path = os.path.join(os.path.dirname(__file__), '../tools/Tide_finger')
+        command = [
+            './TideFinger',
+            '-u', target
+        ]
 
     # 判断target是否以http或https开头，如果不是，则添加http或https进行测试
     if not target.startswith(('http://', 'https://')):
@@ -30,12 +42,15 @@ def run_tide(target):
     else:
         print(f"目标已包含协议: {target}")
 
-    command = [
-        './TideFinger',
-        '-u', target
-    ]
+    # 根据操作系统决定是否使用 shell
+    use_shell = True if platform.system() == 'Windows' else False
+    
+    # 如果是 Linux，确保文件有执行权限
+    if platform.system() != 'Windows':
+        subprocess.run(['chmod', '+x', os.path.join(tool_path, 'TideFinger')], shell=False)
+    
     # 执行命令并捕获输出
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=dirsearch_path)
+    result = subprocess.run(command, shell=use_shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=tool_path)
     output = result.stdout.decode('utf-8')
     parsed_results = handle_result(output)
     return parsed_results

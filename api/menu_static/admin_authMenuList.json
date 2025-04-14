@@ -5,6 +5,7 @@
       "path": "/home/index",
       "name": "home",
       "component": "/home/index",
+      "title": "首页",
       "meta": {
         "icon": "HomeFilled",
         "title": "首页",
@@ -19,6 +20,7 @@
     {
       "path": "/assets",
       "name": "assets",
+      "title": "运营中心",
       "redirect": "/assets/accountManage",
       "meta": {
         "icon": "PieChart",
@@ -33,6 +35,7 @@
         {
           "path": "/assets/assetManage",
           "name": "assetManage",
+          "title": "资产管理",
           "component": "/assets/assetManage/index",
           "meta": {
             "icon": "Menu",
@@ -48,6 +51,7 @@
               "path": "/assets/assetManage/detail/:id",
               "name": "assetManageDetail",
               "component": "/assets/assetManage/detail",
+              "title": "资产详情",
               "meta": {
                 "icon": "Menu",
                 "title": "资产详情",
@@ -64,6 +68,7 @@
         {
           "path": "/assets/attckManage",
           "name": "attckManage",
+          "title": "攻击面管理",
           "redirect": "/assets/attckManage/Vuln_info",
           "meta": {
             "icon": "Menu",
@@ -78,10 +83,39 @@
             {
               "path": "/assets/attckManage/Vuln_info",
               "name": "Vuln_info",
+              "title": "漏洞管理",
               "component": "/assets/attckManage/Vuln_info/index",
               "meta": {
                 "icon": "Menu",
                 "title": "漏洞管理",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            },
+            {
+              "path": "/assets/attckManage/SensitiveDir",
+              "name": "Sensitive_dir",
+              "component": "/assets/attckManage/SensitiveDir/index",
+              "meta": {
+                "icon": "Menu",
+                "title": "敏感目录",
+                "isLink": "",
+                "isHide": false,
+                "isFull": false,
+                "isAffix": false,
+                "isKeepAlive": true
+              }
+            },
+            {
+              "path": "/assets/attckManage/SensitiveInfo",
+              "name": "sensitive_info",
+              "component": "/assets/attckManage/SensitiveInfo/index",
+              "meta": {
+                "icon": "Menu",
+                "title": "敏感信息",
                 "isLink": "",
                 "isHide": false,
                 "isFull": false,
@@ -97,6 +131,7 @@
     {
       "path": "/task",
       "name": "task",
+      "title": "任务中心",
       "redirect": "/task/accountManage",
       "meta": {
         "icon": "List",
@@ -111,6 +146,7 @@
         {
           "path": "/task/scanTaskManage",
           "name": "scanTaskManage",
+          "title": "扫描任务",
           "component": "/task/scanTaskManage/index",
           "meta": {
             "icon": "Menu",
@@ -128,6 +164,7 @@
     {
       "path": "/poc/index",
       "name": "poc",
+      "title": "POC管理",
       "component": "/poc/index",
       "meta": {
         "icon": "Operation",
@@ -141,12 +178,13 @@
     },
 
     {
-      "path": "/system",
-      "name": "system",
+      "path": "/project",
+      "name": "project",
+      "title": "项目管理",
       "redirect": "/system/accountManage",
       "meta": {
-        "icon": "Tools",
-        "title": "系统管理",
+        "icon": "Memo",
+        "title": "项目管理",
         "isLink": "",
         "isHide": false,
         "isFull": false,
@@ -157,6 +195,7 @@
         {
           "path": "/system/organizationManage",
           "name": "organizationManage",
+          "title": "项目管理",
           "component": "/system/organizationManage/index",
           "meta": {
             "icon": "Menu",
@@ -171,6 +210,7 @@
         {
           "path": "/system/assetInput",
           "name": "assetInput",
+          "title": "项目资产",
           "component": "/system/assetInput/index",
           "meta": {
             "icon": "Menu",
@@ -181,14 +221,47 @@
             "isAffix": false,
             "isKeepAlive": true
           }
-        },
+        }
+      ]
+    },
+    {
+      "path": "/system",
+      "name": "system",
+      "title": "系统管理",
+      "redirect": "/system/accountManage",
+      "meta": {
+        "icon": "Tools",
+        "title": "系统管理",
+        "isLink": "",
+        "isHide": false,
+        "isFull": false,
+        "isAffix": false,
+        "isKeepAlive": true
+      },
+      "children": [
         {
           "path": "/system/roleManage",
           "name": "roleManage",
+          "title": "角色管理",
           "component": "/system/roleManage/index",
           "meta": {
             "icon": "Menu",
             "title": "角色管理",
+            "isLink": "",
+            "isHide": false,
+            "isFull": false,
+            "isAffix": false,
+            "isKeepAlive": true
+          }
+        },
+        {
+          "path": "/system/userManage",
+          "name": "userManage",
+          "title": "用户管理",
+          "component": "/system/userManage/index",
+          "meta": {
+            "icon": "Menu",
+            "title": "用户管理",
             "isLink": "",
             "isHide": false,
             "isFull": false,
@@ -202,6 +275,7 @@
     {
       "path": "/about/index",
       "name": "about",
+      "title": "关于本系统",
       "component": "/about/index",
       "meta": {
         "icon": "InfoFilled",

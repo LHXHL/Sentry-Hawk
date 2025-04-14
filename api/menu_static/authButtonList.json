@@ -2,7 +2,9 @@
   "code": 200,
   "data": {
     "useProTable": ["add", "batchAdd", "export", "batchDelete", "status"],
-    "assetManage": ["add", "edit", "delete", "import", "export"]
+    "assetManage": ["add", "edit", "delete", "import", "export"],
+    "userManage": ["add", "edit", "delete", "import", "export"],
+    "roleManage": ["add", "edit", "delete", "import", "export"]
   },
   "msg": "成功"
 }

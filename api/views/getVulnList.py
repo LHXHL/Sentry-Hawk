@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views import View
-from app.models import Vuln_info, Asset_info
+from app.models import Vuln_info, Asset_info, Projects
 from django import forms
 from api.views.login import clean_form
 from api.serializers import VulnInfoSerializer
@@ -39,10 +39,25 @@ class getVulnList(View):
         if not form.is_valid():
             res['msg'] = clean_form(form)
             return JsonResponse(res)
-        projectId = form.cleaned_data['projectId']
+
         filter_kwargs = {}
-        if projectId:
-            filter_kwargs['project'] = projectId
+        
+        # 非管理员只能查看自己项目的漏洞
+        if not request.user.is_superuser:
+            user_projects = Projects.objects.filter(project_user=request.user.nid).values_list('id', flat=True)
+            filter_kwargs['project__in'] = user_projects
+
+        if form.cleaned_data['projectId']:
+            # 验证用户是否有权限访问此项目
+            if not request.user.is_superuser:
+                if form.cleaned_data['projectId'] not in user_projects:
+                    return JsonResponse({
+                        'code': 403,
+                        'msg': '无权访问该项目的漏洞信息',
+                        'data': {}
+                    })
+            filter_kwargs['project'] = form.cleaned_data['projectId']
+            
         if form.cleaned_data['vuln_name']:
             filter_kwargs['vuln_name__icontains'] = form.cleaned_data['vuln_name']
         if form.cleaned_data['target']:
@@ -51,6 +66,8 @@ class getVulnList(View):
                 filter_kwargs['target'] = target
         if form.cleaned_data['vuln_level']:
             filter_kwargs['vuln_level'] = form.cleaned_data['vuln_level']
+            
+        contact_list = Vuln_info.objects.filter(**filter_kwargs).order_by('id')
         if filter_kwargs:
             contact_list = Vuln_info.objects.filter(**filter_kwargs).order_by('id')
         else:

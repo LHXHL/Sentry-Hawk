@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views import View
-from app.models import Asset_scan_input
+from app.models import Asset_scan_input, Projects
 from django import forms
 from api.views.login import clean_form
 from api.serializers import Asset_infoSerializer
@@ -38,14 +38,31 @@ class getAsset_inputList(View):
         if not form.is_valid():
             res['msg'] = clean_form(form)
             return JsonResponse(res)
-        projectId = form.cleaned_data['projectId']
+
         filter_kwargs = {}
-        if projectId:
-            filter_kwargs['asset_project'] = projectId
+        
+        # 非管理员只能查看自己的项目资产
+        if not request.user.is_superuser:
+            user_projects = Projects.objects.filter(project_user=request.user.nid).values_list('id', flat=True)
+            filter_kwargs['asset_project__in'] = user_projects
+            
+        if form.cleaned_data['projectId']:
+            # 验证用户是否有权限访问此项目
+            if not request.user.is_superuser:
+                if form.cleaned_data['projectId'] not in user_projects:
+                    return JsonResponse({
+                        'code': 403,
+                        'msg': '无权访问该项目资产',
+                        'data': {}
+                    })
+            filter_kwargs['asset_project'] = form.cleaned_data['projectId']
+            
         if form.cleaned_data['asset']:
             filter_kwargs['asset__icontains'] = form.cleaned_data['asset']
         if form.cleaned_data['asset_type']:
             filter_kwargs['asset_type'] = form.cleaned_data['asset_type']
+            
+        contact_list = Asset_scan_input.objects.filter(**filter_kwargs).order_by('asset_id')
         if filter_kwargs:
             contact_list = Asset_scan_input.objects.filter(**filter_kwargs).order_by('asset_id')
         else:

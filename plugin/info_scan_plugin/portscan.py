@@ -1,5 +1,6 @@
 import re, os
 import subprocess
+import platform
 
 from django.db.models import Q
 
@@ -30,10 +31,24 @@ def insert_scan_result(asset, port, status, service, version):
 
     print(f"rustscan扫描{asset}结果保存完成")
 def scan_port(ip_address, asset):
-    rustscan_path = os.path.join(os.path.dirname(__file__), '../tools/rustscan/rustscan')
-    command = [rustscan_path, '-a', ip_address, '-r', '1-65535','--','-sV']
+    # 根据操作系统选择工具路径和执行文件
+    if platform.system() == 'Windows':
+        rustscan_path = os.path.join(os.path.dirname(__file__), '../tools/rustscan/')
+        command = ['rustscan.exe', '-a', ip_address, '-r', '1-65535', '--', '-sV']
+    else:
+        rustscan_path = os.path.join(os.path.dirname(__file__), '../tools/rustscan/')
+        command = ['./rustscan', '-a', ip_address, '-r', '1-65535', '--', '-sV']
+
     print(f"rustscan 开始扫描{ip_address}")
-    result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
+    
+    # 根据操作系统决定是否使用 shell
+    use_shell = True if platform.system() == 'Windows' else False
+    
+    # 如果是 Linux，确保文件有执行权限
+    if platform.system() != 'Windows':
+        subprocess.run(['chmod', '+x', rustscan_path], shell=False)
+    
+    result = subprocess.run(command, shell=use_shell, capture_output=True, text=True, encoding='utf-8', cwd=os.path.dirname(rustscan_path))
     print(result.stdout)
     extracted_info = extract_info(result.stdout, ip_address)
     print(extracted_info)

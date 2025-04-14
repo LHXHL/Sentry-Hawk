@@ -61,6 +61,11 @@ class getProjectList(View):
             project_info['url_num'] = url_num
             project_info['domain_num'] = domain_num
             project_info['ip_num'] = ip_num
+            # 移除重复的用户信息获取代码
+            project = Projects.objects.get(id=project_id)
+            project_info['project_user'] = project.project_user.nid if project.project_user else None
+            project_info['project_user_name'] = project.project_user.username if project.project_user else None
+
         res['data']['list'] = project_info_list
         res['data']['pageSize'] = page_obj.paginator.num_pages
         res['data']['pageNum'] = page_obj.number

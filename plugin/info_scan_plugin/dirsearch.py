@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from pygments.lexer import default
 
 from app.models import Sensitive_dir, Asset_info
+import platform
 
 
 dirsearch_path = os.path.join(os.path.dirname(__file__), '../tools/dirsearch/')  # 计算 wih 工具的目录
@@ -39,11 +40,15 @@ def run_dirsearch(target):
         print(f"目标已包含协议: {target}")
 
     command = [
-        'python','dirsearch.py',
-        '-u', target,'-i 200,403,401,302'
+        'python', 'dirsearch.py',
+        '-u', target, '-i 200,403,401,302'
     ]
+    
+    # 根据操作系统决定是否使用 shell
+    use_shell = True if platform.system() == 'Windows' else False
+    
     # 执行命令并捕获输出
-    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=dirsearch_path)
+    result = subprocess.run(command, shell=use_shell, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=dirsearch_path)
     output = result.stdout.decode('utf-8')
     parsed_results = handle_result(output)
     return parsed_results,target

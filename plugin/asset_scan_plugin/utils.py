@@ -7,8 +7,17 @@ def remove_port(url):
 
 # 使用正则去掉 http:// 或 https://
 def clean_url(url):
+    # 移除协议前缀
     url_pattern = re.compile(r'https?://')
-    return remove_port(re.sub(url_pattern, '', url))
+    url = re.sub(url_pattern, '', url)
+    
+    # 移除端口号
+    url = remove_port(url)
+    
+    # 移除路径部分
+    url = url.split('/')[0]
+    
+    return url
 
 
 # 判断是不是ipv4

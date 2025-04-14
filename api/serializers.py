@@ -3,7 +3,7 @@ from dateutil import parser
 from app.models import Tags
 import os
 import logging
-from app.models import Poc_info
+from app.models import Poc_info,Projects
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +28,21 @@ class Asset_infoSerializer(serializers.Serializer):
         ret['asset_editor_time'] = parser.parse(ret['asset_editor_time']).strftime('%Y.%m.%d  %H:%M:%S')
         return ret
 
-class ProjectsInfoSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+class ProjectsInfoSerializer(serializers.ModelSerializer):
     project_name = serializers.CharField(source='name')
-    project_tag = serializers.PrimaryKeyRelatedField(source='tag', read_only=True)
+    project_tag = serializers.IntegerField(source='tag.id')
+    project_user = serializers.SerializerMethodField()
+    project_user_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Projects
+        fields = ['id', 'project_name', 'project_tag', 'project_user', 'project_user_name']
+
+    def get_project_user(self, obj):
+        return obj.project_user.nid if obj.project_user else None
+
+    def get_project_user_name(self, obj):
+        return obj.project_user.username if obj.project_user else None
 
 
 class ScanInfoSerializer(serializers.Serializer):

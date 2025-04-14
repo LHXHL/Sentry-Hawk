@@ -3,6 +3,10 @@ from api.views import login, register, getAssetOrganization, demo, getAssetList,
 from api.views import getPoclist, getVulnList, getAuthButtonList, getAuthMenuList, getAsset_inputlist
 from api.views.sensitive_dir import getSensitive_dirList
 from api.views.sensitive_info import getSensitive_infoList
+from api.views.user.user_view import UserView
+from api.views.user_group.user_group_view import UserGroupView
+from api.views.project_tag.project_tag_view import ProjectTagView
+
 urlpatterns = [
     path('login/', login.LoginViews.as_view()),  # 登录视图
     path('logout/',login.LogoutViews.as_view()),  # 注销
@@ -36,5 +40,13 @@ urlpatterns = [
     re_path('^sensitive_dir/', include('api.views.sensitive_dir.sensitive_dir_urls')),
     re_path('^sensitive_info/', include('api.views.sensitive_info.sensitive_info_urls')),
 
+    # 用户和用户组管理API
+    path('user/', UserView.as_view()),  # 用户管理
+    path('user/group/', UserGroupView.as_view()),  # 用户组管理
+    path('project/tag/', ProjectTagView.as_view()),  # 项目类型管理
+
+
+    #path('group/path/', GroupPathView.as_view()),
+    #path('group/path/<int:group_id>/', GroupPathView.as_view()),
     # path('sign/', login.signViews.as_view()),
 ]

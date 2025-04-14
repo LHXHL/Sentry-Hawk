@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import AbstractUser  # django的auth表
+from django.contrib.auth.models import Group
 
 
 # 用户表
@@ -14,7 +15,16 @@ class UserInfo(AbstractUser):  # 继承django的auth表
     addr = models.TextField(verbose_name='用户地址信息', null=True, blank=True)
     phone_num = models.BigIntegerField(verbose_name='手机号', unique=True, blank=True, null=True, )
     mail = models.EmailField(verbose_name='邮箱', max_length=255, unique=True, blank=True, null=True, )
-
+    user_group = models.ForeignKey(
+        to='auth.Group',
+        to_field='id',
+        on_delete=models.SET_NULL,
+        verbose_name='用户组',
+        null=True,
+        blank=True,
+        related_name='user_group'
+    )
+    
     class Meta:
         verbose_name_plural = '用户'
 
@@ -158,6 +168,14 @@ class Projects(models.Model):
         to_field='id',
         on_delete=models.CASCADE,
         verbose_name='项目标签',
+    )
+    project_user = models.ForeignKey(
+        to='UserInfo',
+        to_field='nid',
+        on_delete=models.SET_NULL,
+        verbose_name='项目用户',
+        blank=True,
+        null=True
     )
     add_time = models.DateTimeField(auto_now_add=True, verbose_name='项目创建时间', blank=True, null=True)
     editor_time = models.DateTimeField(auto_now=True, verbose_name='项目最新修改时间', blank=True, null=True)
@@ -475,4 +493,16 @@ class OneforallResult(models.Model):
 
     class Meta:
         verbose_name_plural = 'OneForall扫描结果'
+
+
+from django.contrib.auth.models import Group
+
+# 权限组路径扩展
+class GroupPath(models.Model):
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name='group_path')
+    path = models.JSONField(verbose_name='菜单路径', null=True, blank=True)
+    
+    class Meta:
+        verbose_name = '权限组路径'
+        verbose_name_plural = verbose_name
 
